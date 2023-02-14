@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Maria Elena</title>}
+	<style type="text/css">
+		body{
+			background:  black;
+		}
+		.heart {
+		  background: #f92446;
+		  position: absolute;
+		  transform: rotate(-45deg);
+		}
+
+		.heart::before,
+		.heart::after {
+		  position: absolute;
+		  content: "";
+		  width: 100%;
+		  height: 100%;
+		  background: #f92446;
+		  border-radius: 50%;
+		}
+
+		.heart::before {
+		  top: -50%;
+		  left: 0;
+		}
+		.heart::after {
+		  top: 0;
+		  right: -50%;
+		}
+
+		.particula {
+			width: 8px;
+			height: 8px;
+			background: black;
+			border-radius: 50%;
+			position: absolute;
+		}
+
+		.particula[data-padre="false"] {
+			width: 5px;
+			height: 5px;
+		}
+
+		body, html {
+			overflow-y: hidden;
+			overflow-x: hidden;
+
+			background: black;
+		}
+
+		#fondo {
+			position: absolute;
+		    bottom: -100px;
+		    opacity: .4;
+		}
+
+		.fcc-btn {
+    background-color: #eb0c0c;
+    color: white;
+	position: inherit;
+  }
+
+  .fcc-btn {
+    background-color: #eb0c0c;
+    color: white;
+    padding: 15px 25px;
+    text-decoration: none;
+  }
+  .fcc-btn:hover {
+  background-color: #223094;
+}
+	</style>
+</head>
+<body>
+    <img src="fondo.png" id="fondo" />
+
+	<a target="_blank" class="fcc-btn" href="maria__elena.html" style="position: absolute;top: 44%; right: 44%;";>¡Feliz Día Maria Elena!</a>  
+
+<script type="text/javascript">
+	var num = 10;
+
+	var w = window.innerWidth;
+	var h = window.innerHeight;
+
+	var dirx = [];
+	var diry = [];
+
+	for (i = 0; i < num; i++) {
+	  //Crear corazon
+	  let heart = document.createElement("DIV");
+	  heart.className = "heart";
+	  document.body.appendChild(heart);
+	  //Asignar tamaño       
+	  let tam = Math.floor((Math.random() * 20) + 15);
+	  heart.style.width = tam + "px";
+	  heart.style.height = tam + "px";
+	  //Asignar posicion inicial
+	  let posy = Math.floor((Math.random() * 0.1 * h) + 0.8 * h);
+	  heart.style.top = posy + "px";
+	  let posx = Math.floor((Math.random() * 0.8 * w) + 0.1 * h);
+	  heart.style.left = posx + "px";
+	  //Crear vector direccion y id
+	  heart.id = "h" + i;
+	  diry[i] = Math.floor((Math.random() * 5) - 10);
+	  dirx[i] = Math.floor((Math.random() * 10) - 5);
+	  //Asignar evento
+	  heart.setAttribute("onclick","deleteheart(this)")
+	}
+
+	setInterval(function() {
+	  move()
+	}, 60);
+
+	function move(){
+	  for(i=0;i<num;i++){
+	    //Seleccion de corazon
+	    let heart = document.getElementById("h"+i);
+	    //Aumento de coordenadas
+	    let y =  parseInt(heart.style.top) + diry[i];
+	    let x =  parseInt(heart.style.left) + dirx[i];
+	    //Reinicio de coordenadas
+	    if (x > 0.8*w) { x = 0.2*w;}
+	    if (x < 0.2*w) { x = 0.8*w;}
+	    if (y < 0.2*h) { y = 0.8*h;}
+	    if (y > 0.8*h) { y = 0.2*w;}
+	    //Asigmnacion de coordenadas
+	    heart.style.top = y + "px";
+	    heart.style.left = x + "px";
+	  }
+	}
+
+	function deleteheart(element){
+	  element.style.display = "none";
+	}
+
+
+    var gravedad = .5;
+    var numHijos = 50;
+
+    var numParticulas = 100;
+    var particulasCreadas = 0;
+
+    function crearParticula() {
+        var particula = document.createElement("div");
+        particula.className="particula";
+
+        var y = window.innerHeight;
+        var x = Math.random() * window.innerWidth;
+
+        particula.style.top = y + "px";
+        particula.style.left = x + "px";
+
+        var velocidadY = -5 - (Math.random() * 25);
+
+        particula.setAttribute("data-velocidad-y", velocidadY);
+        particula.setAttribute("data-velocidad-x", "1");
+        particula.setAttribute("data-padre", "true");
+
+        particula.style.background = getRandomColor();
+
+        document.getElementsByTagName("body")[0].append(particula);
+
+        particulasCreadas++;
+
+        if (particulasCreadas < numParticulas) {
+            setTimeout(crearParticula, 80 + (Math.random() * 180));
+        }
+    }
+
+    function start() {
+        crearParticula();
+    }
+
+    function update() {
+        var particulas = document.getElementsByClassName("particula");
+        for (var p=0; p < particulas.length; p++) {
+            var particula = particulas[p];
+
+            var velocidadY = parseFloat(particula.getAttribute("data-velocidad-y"));
+            velocidadY += gravedad;
+
+            particula.setAttribute("data-velocidad-y", velocidadY);
+
+            var top = particula.style.top ? particula.style.top : "0"; //10px
+            top = parseFloat(top.replace("px", ""));
+            top += velocidadY;
+            particula.style.top = top + "px";
+
+            var velocidadX = parseFloat(particula.getAttribute("data-velocidad-x"));
+
+            var left = particula.style.left ? particula.style.left : "0";
+            left = parseFloat(left.replace("px", ""));
+            left += velocidadX;
+            particula.style.left = left + "px";
+
+            var padre = particula.getAttribute("data-padre");
+
+            if (velocidadY >= 0 && padre === "true") {
+                explotar(particula);
+            }
+
+            if (top > window.innerHeight) {
+                particula.remove();
+            }
+        }
+
+        setTimeout(update, 30);
+    }
+
+    function explotar(particula) {
+
+        for (var h=0; h < numHijos; h++) {
+            var hijo = document.createElement("div");
+            hijo.className = "particula";
+
+            hijo.style.top = particula.style.top;
+            hijo.style.left = particula.style.left;
+            hijo.style.background = particula.style.background;
+
+            var velocidadY = (Math.random() * 20) - 10;
+            hijo.setAttribute("data-velocidad-y", velocidadY);
+            var velocidadX = (Math.random() * 16) - 4;
+            hijo.setAttribute("data-velocidad-x", velocidadX);
+
+
+            hijo.setAttribute("data-padre", false);
+
+            //Agregar el hijo :) :) :)
+            document.getElementsByTagName("body")[0].append(hijo);
+        }
+
+        particula.remove();
+    }
+
+
+setInterval(function() {
+    start();
+
+    update();
+}, 1500);
+
+// window.onload = function() {
+// 	start();
+
+// 	update();
+// };
+
+
+//utilerias
+    function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+    }
+</script>
+</body>
+</html>
